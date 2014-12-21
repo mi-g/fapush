@@ -1,6 +1,6 @@
 # FAPush
 
-This Firefox addon-sdk module implements a [https://wiki.mozilla.org/WebAPI/SimplePush/Protocol](SimplePush) client to allow 
+This Firefox addon-sdk module implements a [SimplePush](https://wiki.mozilla.org/WebAPI/SimplePush/Protocol) client to allow 
 receiving asynchronous push notifications.
 
 ## Installation
@@ -13,20 +13,20 @@ The FAPush API is very similar to the [navigator.push](https://developer.mozilla
 a few differences:
 
 - the service is obtained with `var push = require('./fapush.js')` instead of `var push = window.navigator.push`
-- the service does not start automatically and must be launch using the `init(...)` method
+- the service does not start automatically and must be launched using the `init(...)` method
 - notifications are received in a callback passed to the `init(...)` method
+- the service can be stopped using a `destroy()` method
 
 ### init([options])
 
 `options` is an object that may hold the following members:
 
 - `onmessage`: a callback function receiving 2 parameters:
-	+ `type`: either 
-		. `'push'`: regular push notification message  
-		. or `'push-register'`: the client must re-register notifications
-	+ `message`: the message content. If `type` is `'push'`, `message` contains `pushEndpoint` and `version`.
-
-- `serverUrl`: the push server to connect to defaults to `'wss://push.services.mozilla.com'`
+  + `type`: either 
+    * `'push'`: regular push notification message  
+    * or `'push-register'`: the client must re-register notifications
+  + `message`: the message content. If `type` is `'push'`, `message` contains `pushEndpoint` and `version`.
+- `serverUrl`: the push server to connect to (defaults to `'wss://push.services.mozilla.com'`)
 - `retryTimeout`: time before reconnecting to the push server in case the web socket closes (default `10000`, 10 seconds)
 - `usePing`: keep alive using ping messages (default `true`)
 - `pingTimeout`: time of inactivity before sending a ping message to the server (default `1800000`, 30 minutes)
@@ -68,7 +68,7 @@ function RegisterPush() {
   var req = push.register();
   req.onsuccess = function(e) {
     endpoint = e.target.result;
-    // tell out app server about the endpoint to be used to notify this client
+    // tell our app server about the endpoint to be used to notify this client
   }
   req.onerror = function(err) {
     console.warn("Something went wrong",err);
