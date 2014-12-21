@@ -22,6 +22,7 @@ var timerRetry = null;
 var timerPing = null;
 var timerPong = null;
 var connected = false;
+var running = false;
 var registerRequests = {};
 var unregisterRequests = {};
 var pendingRegisters = {};
@@ -50,6 +51,7 @@ var listener = {
 					connected = true;
 					if(options.uaid.length>0 && options.uaid!=msg.uaid) {
 						AbortRegistrations();
+						SaveRegistrations({});
 						timers.setTimeout(function() {
 							try {
 								options.onmessage('push-register',{});								
@@ -187,6 +189,8 @@ function SaveRegistrations(registrations) {
 }
 
 function Start() {
+	if(!running)
+		return;
 	var uri = ioService.newURI(options.serverUrl, null, null);
 	wssChan = wss.createInstance(Ci.nsIWebSocketChannel);
 	wssChan.asyncOpen(uri, "", listener, null);	
@@ -264,7 +268,6 @@ function AbortRegistrations() {
 	pendingRegisters = {};
 	AbortPool(pendingUnregisters);
 	pendingUnregisters = {};
-	SaveRegistrations({});
 }
 
 exports.init = function(opts) {
@@ -295,7 +298,20 @@ exports.init = function(opts) {
 	for(var f in opts) 
 		if(opts.hasOwnProperty(f))
 			options[f] = opts[f];
+	running = true;
 	Start();
+}
+
+exports.destroy = function() {
+	running = false;
+	ClearTimerRetry();
+	ClearTimerPing();
+	ClearTimerPong();
+	AbortRegistrations();
+	if(wssChan) {
+		wssChan.close(1000,"Closed");
+		wssChan = null;
+	}
 }
 
 exports.register = function() {
