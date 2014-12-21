@@ -5,7 +5,7 @@ receiving asynchronous push notifications.
 
 ## Installation
 
-Simply copy `push.js` into the `./lib` directory of your addon
+Simply copy `fapush.js` into the `./lib` directory of your addon
 
 ## Usage
 
