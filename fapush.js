@@ -1,3 +1,6 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+* License, v. 2.0. If a copy of the MPL was not distributed with this
+* file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 const { Cc, Ci } = require("chrome");
 const ioService = Cc["@mozilla.org/network/io-service;1"].getService(Ci.nsIIOService);
@@ -29,14 +32,16 @@ var listener = {
 	onBinaryMessageAvailable: function(aContext, aMsg) {},
 	onMessageAvailable: function(aContext, aMsg) {
 		//console.info("FAPush:onMessageAvailable",aMsg);
-		ClearTimerPong();
-		SetTimerPing(function() {
-			wssChan.sendMsg("{}");
-			SetTimerPong(function() {
-				wssChan.close(1000,"No answer to ping");
-				Start();
+		if(options.usePing) {
+			ClearTimerPong();
+			SetTimerPing(function() {
+				wssChan.sendMsg("{}");
+				SetTimerPong(function() {
+					wssChan.close(1000,"No answer to ping");
+					connected = false;
+				});
 			});
-		});
+		}
 		try {
 			var msg=JSON.parse(aMsg);
 			switch(msg.messageType) {
@@ -273,6 +278,7 @@ exports.init = function(opts) {
 	options = {
 		serverUrl: "wss://push.services.mozilla.com",
 		uaid: "",
+		usePing: false,
 		retryTimeout: 10000,
 		pingTimeout: 30*60*1000,
 		pongTimeout: 10*1000,
