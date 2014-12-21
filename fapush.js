@@ -175,7 +175,6 @@ function HandlePing() {
 		ClearTimerPong();
 		SetTimerPing(function() {
 			wssChan.sendMsg("{}");
-			console.info("sent ping");
 			SetTimerPong(function() {
 				if(wssChan)
 					wssChan.close(1000,"No answer to ping");
@@ -291,7 +290,7 @@ exports.init = function(opts) {
 		serverUrl: "wss://push.services.mozilla.com",
 		uaid: "",
 		usePing: true,
-		retryTimeout: 10000,
+		retryTimeout: 10*1000,
 		pingTimeout: 30*60*1000,
 		pongTimeout: 10*1000,
 		onmessage: function() {}
