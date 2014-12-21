@@ -33,6 +33,22 @@ Mozilla push server doesn't seem to answer to pings)
 - `pingTimeout`: time of inactivity before sending a ping message to the server (default `1800000`, 30 minutes)
 - `pongTimeout`: time to expect answer to ping (default `10000`, 10 seconds)
 
+### destroy()
+
+Close push server socket and clear all used resources. Existing channels are not unregistered to the push server
+and can be reused in a future session.
+
+### registrations()
+
+See [PushManager.registrations documentation](https://developer.mozilla.org/en-US/docs/Web/API/PushManager.registrations).
+
+### register()
+
+See [PushManager.register documentation](https://developer.mozilla.org/en-US/docs/Web/API/PushManager.register).
+
+### unregister(pushEndpoint)
+
+See [PushManager.unregister documentation](https://developer.mozilla.org/en-US/docs/Web/API/PushManager.unregister).
 
 ## Example
 
