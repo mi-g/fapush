@@ -30,19 +30,13 @@ var pendingUnregisters = {};
 
 var listener = {
 	onAcknowledge: function(aContext,aSize) {},
-	onBinaryMessageAvailable: function(aContext, aMsg) {},
+	onBinaryMessageAvailable: function(aContext, aMsg) {
+		//console.info("FAPush:onBinaryMessageAvailable",aMsg);		
+		HandlePing();
+	},
 	onMessageAvailable: function(aContext, aMsg) {
 		//console.info("FAPush:onMessageAvailable",aMsg);
-		if(options.usePing) {
-			ClearTimerPong();
-			SetTimerPing(function() {
-				wssChan.sendMsg("{}");
-				SetTimerPong(function() {
-					wssChan.close(1000,"No answer to ping");
-					connected = false;
-				});
-			});
-		}
+		HandlePing();
 		try {
 			var msg=JSON.parse(aMsg);
 			switch(msg.messageType) {
@@ -176,6 +170,21 @@ var listener = {
 	}
 }
 
+function HandlePing() {
+	if(options.usePing) {
+		ClearTimerPong();
+		SetTimerPing(function() {
+			wssChan.sendMsg("{}");
+			console.info("sent ping");
+			SetTimerPong(function() {
+				if(wssChan)
+					wssChan.close(1000,"No answer to ping");
+				connected = false;
+			});
+		});
+	}	
+}
+
 function GetRegistrations() {
 	var registrations = {};
 	try {
@@ -281,7 +290,7 @@ exports.init = function(opts) {
 	options = {
 		serverUrl: "wss://push.services.mozilla.com",
 		uaid: "",
-		usePing: false,
+		usePing: true,
 		retryTimeout: 10000,
 		pingTimeout: 30*60*1000,
 		pongTimeout: 10*1000,
