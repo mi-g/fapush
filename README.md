@@ -28,8 +28,7 @@ a few differences:
 
 - `serverUrl`: the push server to connect to defaults to `'wss://push.services.mozilla.com'`
 - `retryTimeout`: time before reconnecting to the push server in case the web socket closes (default `10000`, 10 seconds)
-- `usePing`: keep alive using ping messages (default `false`, should be `true` according to SimplePush specs, but the current 
-Mozilla push server doesn't seem to answer to pings)
+- `usePing`: keep alive using ping messages (default `true`)
 - `pingTimeout`: time of inactivity before sending a ping message to the server (default `1800000`, 30 minutes)
 - `pongTimeout`: time to expect answer to ping (default `10000`, 10 seconds)
 
